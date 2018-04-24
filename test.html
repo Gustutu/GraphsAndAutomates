@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <script src="sigma.require.js"></script>
+    <script src="sigma.renderers.edgeLabels.min.js">
+    </script>
+    <script src="script.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+
+        #container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Welcome to hell</h1>
+
+    <button id="buttonContains">Add contains</button>
+    <button id="buttonContainsOptional">Add contains optional</button>
+    <button id="buttonContainsAtLeastOnce">Add contains at least once</button>
+    <button id="buttonContainsNTimesOptional">Add n times contains optional</button>
+
+    <button id="buttonContainsOneOfThese">Add one of these</button>
+    <br><br>
+
+    <input id="startsWith" placeholder="startsWith">
+    <br>
+
+    <div id="fieldsCont">
+    </div>
+    <input id="endsWith" placeholder="endsWith">
+
+    <button id="yee">yee</button>
+    <button id="clear" onclick="clearCont()">clear</button>
+    <div id="container"></div>
+</body>
+
+</html>
