@@ -1,7 +1,5 @@
 //inputs
 var startsWith;
-var contains;
-var containsOpt;
 var endsWith;
 
 var yee;
@@ -13,7 +11,7 @@ var states;
 
 //inputs2
 
-var inputs=[]; //list of fields
+var inputs = []; //list of fields
 var fieldsCont;
 var buttonContains;
 var buttonContainsOptional;
@@ -24,17 +22,21 @@ var clear;
 
 var container;
 
+var green = "#00994d";
+var red = "#ff3300";
+var grey = "#5c5c8a";
+var textDiv;
+
 
 function init() {
     console.log("init");
     startsWith = document.getElementById("startsWith");
-    contains = document.getElementById("contains");
-    containsOpt = document.getElementById("contains*");
     endsWith = document.getElementById("endsWith");
     yee = document.getElementById("yee");
     yee.addEventListener("click", launch);
 
     container = document.getElementById("container");
+    textDiv = document.getElementById("text");
 
     fieldsCont = document.getElementById("fieldsCont")
     buttonContains = document.getElementById("buttonContains");
@@ -57,10 +59,10 @@ function init() {
     buttonContainsOneOfThese.addEventListener("click", function () {
         addField("containsOneOfThese", 10);
     });
-    
-   
-    
-    
+
+
+
+
 
 
 }
@@ -71,20 +73,20 @@ function launch() {
     states = null;
     count = 0;
     states = [];
-    
-    
+
+
     console.log("launch");
 
 
     //start
-    states[count] = new State(true, false,0,0);
+    states[count] = new State(true, false, 0, 0);
 
     var startsWithValue = startsWith.value;
     startsWithValue.split("");
     for (var i = 0; i < startsWithValue.length; i++) {
         states[count].setDest("Q" + (count + 1), startsWithValue[i]);
         count++;
-        states[count] = new State(false, false,1,0);
+        states[count] = new State(false, false, 1, 0);
     }
 
 
@@ -112,15 +114,16 @@ function launch() {
     }
     //ends
 
-    var endsWithValue = endsWith.value;
+    var endsWithValue = endsWith.value || "#";
     endsWithValue.split("");
     for (var i = 0; i < endsWithValue.length; i++) {
         states[count].setDest("Q" + (count + 1), endsWithValue[i]);
         count++;
+        console.log(i);
         if (i == endsWithValue.length - 1) {
-            states[count] = new State(false, true,1,0);
+            states[count] = new State(false, true, 1, 0);
         } else {
-            states[count] = new State(false, false,1,0);
+            states[count] = new State(false, false, 1, 0);
         }
 
     }
@@ -134,7 +137,7 @@ function launch() {
     create_graph(g);
 
 
-
+    textDiv.innerHTML = JSON.stringify(states);
     console.log(states);
 
 }
@@ -142,18 +145,18 @@ function launch() {
 function handleContains(val) { // 1 time
     states[count].setDest("Q" + (count + 1), val);
     count++;
-    states[count] = new State(false, false,1,0);
+    states[count] = new State(false, false, 1, 0);
 
 }
 
 function handleContainsOptional(val) { //  0 to 1 times
     states[count].setDest("Q" + (count + 1), val);
-    states[count].setDest("Q" + (count + 2), "");
+    states[count].setDest("Q" + (count + 2), "#");
     count++;
-    states[count] = new State(false, false,1,0);
-    states[count].setDest("Q" + (count + 1), "");
+    states[count] = new State(false, false, 1, 0);
+    states[count].setDest("Q" + (count + 1), "#");
     count++;
-    states[count] = new State(false, false,1,0);
+    states[count] = new State(false, false, 1, 0);
 
 }
 
@@ -161,14 +164,14 @@ function handleContainsAtLeastOnce(val) { // 1 to n times
     states[count].setDest("Q" + count, val);
     states[count].setDest("Q" + (count + 1), val);
     count++;
-    states[count] = new State(false, false,1,0);
+    states[count] = new State(false, false, 1, 0);
 }
 
 function handleContainsNTimesOptional(val) { // 0 to n times
     states[count].setDest("Q" + count, val);
-    states[count].setDest("Q" + (count + 1), "");
+    states[count].setDest("Q" + (count + 1), "#");
     count++;
-    states[count] = new State(false, false,1,0);
+    states[count] = new State(false, false, 1, 0);
 
 
 }
@@ -182,13 +185,13 @@ function handleContainsOneOfThese(val) {
     var afterStateNumber = count + choices.length + 1;
 
     for (var i = 0; i < choices.length; i++) {
-        xPos=i==0?1:0;
+        xPos = i == 0 ? 1 : 0;
         count++;
-        states[count] = new State(false, false,xPos,-i);
-        states[count].setDest("Q" + afterStateNumber, "");
+        states[count] = new State(false, false, xPos, -i);
+        states[count].setDest("Q" + afterStateNumber, "#");
     }
     count++
-    states[count] = new State(false, false,1,0);
+    states[count] = new State(false, false, 1, 0);
 
 
 }
@@ -216,10 +219,11 @@ function clearCont() {
     while (fieldsCont.firstChild) {
         fieldsCont.removeChild(fieldsCont.firstChild);
     }
-    startsWith.value="";
-    endsWith.value="";
-    
-    inputs=[];
+    startsWith.value = "";
+    endsWith.value = "";
+
+    inputs = [];
+    textDiv.innerHTML = "";
 
 }
 
@@ -228,21 +232,14 @@ function post_traitement() {
         nodes: [],
         edges: []
     };
-    var i = 0;
-    /*  g.nodes.push({
-          id:'testNode',
-          label:'test1',
-          x: 0,
-          y: 0,
-          size: 1,
-          color: '#666'
-
-      });*/
     var eIteration = 0;
-        var totalX=0;
+    var totalX = 0;
+    var ncolor;
     for (var i = 0; i < states.length; i++) {
         var state = states[i];
-        totalX+=state.xAddedGraphicPosition;
+        ncolor = state.starts ? green : state.ends ? red : grey;
+        console.log(ncolor);
+        totalX += state.xAddedGraphicPosition;
         //console.log(state);
         g.nodes.push({
             size: 1,
@@ -250,7 +247,8 @@ function post_traitement() {
             label: state.id,
             //x: i * (0.3 / states.length),
             x: totalX * (0.3 / states.length),
-            y: 0.03*state.yGraphicPosition
+            y: 0.03 * state.yGraphicPosition,
+            color: ncolor
         });
     }
 
@@ -268,7 +266,7 @@ function post_traitement() {
                 source: 'n' + i,
                 target: 'n' + state.nextStates[y].substr(1),
                 type: 'curvedArrow',
-                size: 10,  
+                size: 100,
                 color: '#666'
             });
 
@@ -290,14 +288,14 @@ function create_graph(g) {
 }
 
 
-function State(start, finish,xAddedGraphicPosition,yGraphicPosition) {
+function State(start, finish, xAddedGraphicPosition, yGraphicPosition) {
     this.id = "Q" + count;
 
     this.starts = start;
     this.ends = finish;
-    
-    this.xAddedGraphicPosition=xAddedGraphicPosition;
-     this.yGraphicPosition=yGraphicPosition;
+
+    this.xAddedGraphicPosition = xAddedGraphicPosition;
+    this.yGraphicPosition = yGraphicPosition;
 
     this.nextStates = [];
     this.nextPathsValues = [];

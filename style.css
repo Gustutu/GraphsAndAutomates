@@ -1,0 +1,51 @@
+body,
+html,
+h1 {
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    margin-bottom: 10px;
+}
+
+#top {
+    width: 100%;
+    position: relative;
+}
+
+#text {
+    float: right;
+    width: 50%;
+    border: 1px solid black;
+    height: 100%;
+    top: 0;
+    right: 0;
+    position: absolute;
+}
+
+#main {
+    width: 50%;
+    height: 100%;
+}
+
+#container {
+    position: absolute;
+    width: calc(100% - 2px);
+    height: 100%;
+    border: 1px solid black;
+}
+
+button {
+    background-color: darkcyan;
+    color: white;
+    border-radius: 2px;
+    padding: 5px;
+    margin: 1px;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: cadetblue;
+}
